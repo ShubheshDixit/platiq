@@ -1,0 +1,18 @@
+# This is a generated file; do not edit or check into version control.
+jitsi_meet=/home/shubhesh/Code/Flutter/PlatiQ/jitsi_meet_plugin/jitsi_meet/
+jitsi_meet_web=/home/shubhesh/Code/Flutter/PlatiQ/jitsi_meet_plugin/jitsi_meet_web/
+cloud_firestore=/home/shubhesh/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/cloud_firestore-0.14.0+2/
+cloud_firestore_web=/home/shubhesh/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/cloud_firestore_web-0.2.0+1/
+firebase_auth=/home/shubhesh/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth-0.18.0+1/
+firebase_auth_web=/home/shubhesh/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth_web-0.3.0+1/
+firebase_core=/home/shubhesh/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-0.5.0/
+firebase_core_web=/home/shubhesh/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-0.2.0/
+firebase_storage=/home/shubhesh/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_storage-4.0.0/
+path_provider=/home/shubhesh/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.14/
+path_provider_linux=/home/shubhesh/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_linux-0.0.1+2/
+path_provider_macos=/home/shubhesh/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4+3/
+shared_preferences=/home/shubhesh/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences-0.5.10/
+shared_preferences_linux=/home/shubhesh/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences_linux-0.0.2+2/
+shared_preferences_macos=/home/shubhesh/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences_macos-0.0.1+10/
+shared_preferences_web=/home/shubhesh/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences_web-0.1.2+7/
+sqflite=/home/shubhesh/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/sqflite-1.3.1+1/

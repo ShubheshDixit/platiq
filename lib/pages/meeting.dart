@@ -1,0 +1,344 @@
+import 'dart:io';
+
+import 'package:PlatiQ/widgets/colors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:jitsi_meet/jitsi_meet.dart';
+
+class Meeting extends StatefulWidget {
+  @required
+  final String roomText;
+  @required
+  final String subjectText;
+  final bool isVideo;
+
+  const Meeting({Key key, this.roomText, this.subjectText, this.isVideo})
+      : super(key: key);
+  @override
+  _MeetingState createState() => _MeetingState();
+}
+
+class _MeetingState extends State<Meeting> {
+  final serverText = TextEditingController();
+  final roomText = TextEditingController(text: "plugintestroom");
+  final subjectText = TextEditingController(text: "My Plugin Test Meeting");
+  final nameText = TextEditingController(text: "Plugin Test User");
+  final emailText = TextEditingController(text: "fake@email.com");
+  final iosAppBarRGBAColor =
+      TextEditingController(text: "#0080FF80"); //transparent blue
+  var isAudioOnly = true;
+  var isAudioMuted = false;
+  var isVideoMuted = true;
+
+  @override
+  void initState() {
+    isVideoMuted = widget.isVideo;
+    isAudioOnly = !widget.isVideo;
+    super.initState();
+    JitsiMeet.addListener(JitsiMeetingListener(
+        onConferenceWillJoin: _onConferenceWillJoin,
+        onConferenceJoined: _onConferenceJoined,
+        onConferenceTerminated: _onConferenceTerminated,
+        onError: _onError));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    JitsiMeet.removeAllListeners();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: backgroundColorDark,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(
+              child: RaisedButton(
+                child: Text('Start Room'),
+                color: mainColor,
+                onPressed: () {
+                  _joinMeeting();
+                },
+              ),
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            Expanded(
+              child: RaisedButton(
+                child: Text('Leave Room'),
+                color: secondColor,
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: Container(
+        child: kIsWeb
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                      width: width,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                            color: Colors.white54,
+                            child: SizedBox(
+                              width: width,
+                              height: height,
+                              child: JitsiMeetConferencing(
+                                extraJS: [
+                                  // extraJs setup example
+                                  '<script>function echo(){console.log("echo!!!")};</script>',
+                                  '<script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>'
+                                ],
+                              ),
+                            )),
+                      ))
+                ],
+              )
+            : meetConfig(),
+      ),
+    );
+  }
+
+  Widget meetConfig() {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 16.0,
+          ),
+          TextField(
+            controller: serverText,
+            decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "Server URL",
+                hintText: "Hint: Leave empty for meet.jitsi.si"),
+          ),
+          SizedBox(
+            height: 14.0,
+          ),
+          TextField(
+            controller: roomText,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: "Room",
+            ),
+          ),
+          SizedBox(
+            height: 14.0,
+          ),
+          TextField(
+            controller: subjectText,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: "Subject",
+            ),
+          ),
+          SizedBox(
+            height: 14.0,
+          ),
+          TextField(
+            controller: nameText,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: "Display Name",
+            ),
+          ),
+          SizedBox(
+            height: 14.0,
+          ),
+          TextField(
+            controller: emailText,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: "Email",
+            ),
+          ),
+          SizedBox(
+            height: 14.0,
+          ),
+          TextField(
+            controller: iosAppBarRGBAColor,
+            decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "AppBar Color(IOS only)",
+                hintText: "Hint: This HAS to be in HEX RGBA format"),
+          ),
+          SizedBox(
+            height: 14.0,
+          ),
+          CheckboxListTile(
+            title: Text("Audio Only"),
+            value: isAudioOnly,
+            onChanged: _onAudioOnlyChanged,
+          ),
+          SizedBox(
+            height: 14.0,
+          ),
+          CheckboxListTile(
+            title: Text("Audio Muted"),
+            value: isAudioMuted,
+            onChanged: _onAudioMutedChanged,
+          ),
+          SizedBox(
+            height: 14.0,
+          ),
+          CheckboxListTile(
+            title: Text("Video Muted"),
+            value: isVideoMuted,
+            onChanged: _onVideoMutedChanged,
+          ),
+          Divider(
+            height: 48.0,
+            thickness: 2.0,
+          ),
+          SizedBox(
+            height: 64.0,
+            width: double.maxFinite,
+            child: RaisedButton(
+              onPressed: () {
+                _joinMeeting();
+              },
+              child: Text(
+                "Join Meeting",
+                style: TextStyle(color: Colors.white),
+              ),
+              color: Colors.blue,
+            ),
+          ),
+          SizedBox(
+            height: 48.0,
+          ),
+        ],
+      ),
+    );
+  }
+
+  _onAudioOnlyChanged(bool value) {
+    setState(() {
+      isAudioOnly = value;
+    });
+  }
+
+  _onAudioMutedChanged(bool value) {
+    setState(() {
+      isAudioMuted = value;
+    });
+  }
+
+  _onVideoMutedChanged(bool value) {
+    setState(() {
+      isVideoMuted = value;
+    });
+  }
+
+  _joinMeeting() async {
+    String serverUrl =
+        serverText.text?.trim()?.isEmpty ?? "" ? null : serverText.text;
+
+    // Enable or disable any feature flag here
+    // If feature flag are not provided, default values will be used
+    // Full list of feature flags (and defaults) available in the README
+    Map<FeatureFlagEnum, bool> featureFlags = {
+      FeatureFlagEnum.WELCOME_PAGE_ENABLED: false,
+    };
+    if (!kIsWeb) {
+      // Here is an example, disabling features for each platform
+      if (Platform.isAndroid) {
+        // Disable ConnectionService usage on Android to avoid issues (see README)
+        featureFlags[FeatureFlagEnum.CALL_INTEGRATION_ENABLED] = false;
+      } else if (Platform.isIOS) {
+        // Disable PIP on iOS as it looks weird
+        featureFlags[FeatureFlagEnum.PIP_ENABLED] = false;
+      }
+    }
+    // Define meetings options here
+    var options = JitsiMeetingOptions()
+      ..room = widget.roomText
+      ..serverURL = serverUrl
+      ..subject = widget.subjectText ?? subjectText.text
+      ..userDisplayName =
+          FirebaseAuth.instance.currentUser.displayName ?? nameText.text
+      ..userEmail = FirebaseAuth.instance.currentUser.email ?? emailText.text
+      ..iosAppBarRGBAColor = iosAppBarRGBAColor.text
+      ..audioOnly = isAudioOnly
+      ..audioMuted = isAudioMuted
+      ..videoMuted = isVideoMuted
+      ..featureFlags.addAll(featureFlags)
+      ..webOptions = {
+        "roomName": widget.roomText,
+        "width": "100%",
+        "height": "100%",
+        "enableWelcomePage": false,
+        "chromeExtensionBanner": null,
+        // "interfaceConfigOverwrite": {
+        //   "DEFAULT_BACKGROUND": '#000000',
+        // },
+        "userInfo": {
+          "displayName": FirebaseAuth.instance.currentUser.displayName
+        }
+      };
+
+    debugPrint("JitsiMeetingOptions: $options");
+    await JitsiMeet.joinMeeting(
+      options,
+      listener: JitsiMeetingListener(
+          onConferenceWillJoin: ({message}) {
+            debugPrint("${options.room} will join with message: $message");
+          },
+          onConferenceJoined: ({message}) {
+            debugPrint("${options.room} joined with message: $message");
+          },
+          onConferenceTerminated: ({message}) {
+            debugPrint("${options.room} terminated with message: $message");
+          },
+          genericListeners: [
+            JitsiGenericListener(
+                eventName: 'readyToClose',
+                callback: (dynamic message) {
+                  debugPrint("readyToClose callback");
+                }),
+          ]),
+    );
+  }
+
+  // static final Map<RoomNameConstraintType, RoomNameConstraint>
+  //     customContraints = {
+  //   RoomNameConstraintType.MAX_LENGTH: new RoomNameConstraint((value) {
+  //     return value.trim().length <= 50;
+  //   }, "Maximum room name length should be 30."),
+  //   RoomNameConstraintType.FORBIDDEN_CHARS: new RoomNameConstraint((value) {
+  //     return RegExp(r"[$€£]+", caseSensitive: false, multiLine: false)
+  //             .hasMatch(value) ==
+  //         false;
+  //   }, "Currencies characters aren't allowed in room names."),
+  // };
+
+  void _onConferenceWillJoin({message}) {
+    debugPrint("_onConferenceWillJoin broadcasted with message: $message");
+  }
+
+  void _onConferenceJoined({message}) {
+    debugPrint("_onConferenceJoined broadcasted with message: $message");
+  }
+
+  void _onConferenceTerminated({message}) {
+    debugPrint("_onConferenceTerminated broadcasted with message: $message");
+  }
+
+  _onError(error) {
+    debugPrint("_onError broadcasted: $error");
+  }
+}
