@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:PlatiQ/models/users.dart';
 import 'package:PlatiQ/widgets/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -12,8 +13,14 @@ class Meeting extends StatefulWidget {
   @required
   final String subjectText;
   final bool isVideo;
+  final MyUser currentUser;
 
-  const Meeting({Key key, this.roomText, this.subjectText, this.isVideo})
+  const Meeting(
+      {Key key,
+      this.roomText,
+      this.subjectText,
+      this.isVideo,
+      this.currentUser})
       : super(key: key);
   @override
   _MeetingState createState() => _MeetingState();
@@ -286,9 +293,7 @@ class _MeetingState extends State<Meeting> {
         // "interfaceConfigOverwrite": {
         //   "DEFAULT_BACKGROUND": '#000000',
         // },
-        "userInfo": {
-          "displayName": FirebaseAuth.instance.currentUser.displayName
-        }
+        "userInfo": {"displayName": widget.currentUser.username}
       };
 
     debugPrint("JitsiMeetingOptions: $options");

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:PlatiQ/pages/meeting.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -515,8 +516,32 @@ class _ChatHomeState extends State<ChatHome>
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    IconButton(icon: Icon(MdiIcons.phone), onPressed: () {}),
-                    IconButton(icon: Icon(MdiIcons.video), onPressed: () {}),
+                    IconButton(
+                        icon: Icon(MdiIcons.phone),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Meeting(
+                                        roomText: widget.chatId,
+                                        subjectText: widget.friendUser.username,
+                                        isVideo: false,
+                                        currentUser: widget.currentUser,
+                                      )));
+                        }),
+                    IconButton(
+                        icon: Icon(MdiIcons.video),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Meeting(
+                                        roomText: widget.chatId,
+                                        subjectText: widget.friendUser.username,
+                                        isVideo: true,
+                                        currentUser: widget.currentUser,
+                                      )));
+                        }),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: IconButton(
@@ -610,6 +635,39 @@ class _ChatHomeState extends State<ChatHome>
                 ),
               ],
             ),
+            actions: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                      icon: Icon(MdiIcons.phone),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Meeting(
+                                      roomText: widget.chatId,
+                                      subjectText: widget.friendUser.username,
+                                      isVideo: false,
+                                      currentUser: widget.currentUser,
+                                    )));
+                      }),
+                  IconButton(
+                      icon: Icon(MdiIcons.video),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Meeting(
+                                      roomText: widget.chatId,
+                                      subjectText: widget.friendUser.username,
+                                      isVideo: true,
+                                      currentUser: widget.currentUser,
+                                    )));
+                      }),
+                ],
+              )
+            ],
           ),
           body: Container(
             color: mainColor,
